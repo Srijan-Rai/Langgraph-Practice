@@ -20,8 +20,17 @@ def add_thread(thread_id):
     if thread_id not in st.session_state['chat_threads']:
         st.session_state['chat_threads'].append(thread_id)
 
+def add_title(thread_id):
+    try:
+        return chatbot.get_state(config={'configurable':{'thread_id':thread_id}}).values['title']
+    except:
+        return str(thread_id)
+
 def load_conversation(thread_id):
-    return chatbot.get_state(config={'configurable':{'thread_id':thread_id}}).values['messages']
+    try:
+        return chatbot.get_state(config={'configurable':{'thread_id':thread_id}}).values['messages']
+    except:
+        return []
 
 #*****************************************Session Creation************************************************************
 if 'message_history' not in st.session_state:
@@ -44,7 +53,7 @@ if st.sidebar.button('New Chat'):
 
 st.sidebar.header('My Conversations')
 for thread_id in st.session_state['chat_threads'][::-1]:
-    if st.sidebar.button(str(thread_id)):
+    if st.sidebar.button(str(add_title(thread_id))):
         st.session_state['thread_id'] = thread_id
         messages = load_conversation(thread_id)
 
